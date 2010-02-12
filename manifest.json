@@ -1,0 +1,21 @@
+{
+	"name": "Chrome Scrobbler",
+	"version": "0.1",  
+	"description": "A last.fm scrobbler for popular websites, such as YouTube, MySpace, and Lala.",
+	"icons": { "128": "lf-icon.png" },
+	"background_page": "background.html",
+	"options_page": "options.html",
+	"permissions": [
+		"tabs",
+		"http://ws.audioscrobbler.com/",
+		"http://post.audioscrobbler.com/",
+		"http://post2.audioscrobbler.com/",
+		"http://gdata.youtube.com/feeds/api/videos/"
+	],
+	"content_scripts": [
+		{
+			"matches": ["http://www.youtube.com/watch?v=*"],
+			"js": ["youtube.js"]
+		}
+  ]
+}
