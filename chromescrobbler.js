@@ -19,7 +19,7 @@ function handshake() {
 	}
 	http_request.open(
 		"GET",
-		"http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=tst&v=1.0&u=" + username + "&t=" + currentTime + "&a=" + token,
+		"http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=chr&v=0.1&u=" + username + "&t=" + currentTime + "&a=" + token,
 		false);
 	http_request.setRequestHeader("Content-Type", "application/xml");
 	http_request.send(null);
