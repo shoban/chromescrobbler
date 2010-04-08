@@ -25,12 +25,16 @@ function handshake() {
 	http_request.send(null);
 }
 
-function nowPlaying() {
+function nowPlaying(sender) {
 	var params = "s=" + sessionID + "&a=" + song.artist + "&t=" + song.track +	"&b=&l=" + song.duration + "&m=&n=";
 	var http_request = new XMLHttpRequest();
 	http_request.onreadystatechange = function() {
 		if (http_request.readyState == 4 && http_request.status == 200)
 			if (http_request.responseText.split("\n")[0] == "BADSESSION") {handshake(); nowPlaying();}
+			else {
+				//Executes updateTitle function in youtube.js, only when there is a successfull session id. If user had wrong pass or uname, it will not update the title
+				chrome.tabs.sendRequest(sender.tab.id, {type: "updateTitle"});
+			}
 	};	
 	http_request.open("POST", nowPlayingURL, true);
 	http_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -64,7 +68,7 @@ chrome.extension.onRequest.addListener(
 					"duration"	:	request.duration,
 					"startTime"	:	parseInt(new Date().getTime() / 1000.0)};
 		if (sessionID == "") handshake();
-		nowPlaying();
+		nowPlaying(sender);
 		sendResponse({});
 		break;
 		case "submit":

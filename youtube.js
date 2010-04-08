@@ -1,7 +1,7 @@
 var videoID = document.URL.replace(/^[^v]+v.(.{11}).*/,"$1");
 var googleURL = "http://gdata.youtube.com/feeds/api/videos/" + videoID + "?alt=json";
 
-
+//Send
 chrome.extension.sendRequest({type: "xhr", url: googleURL}, function(response) {
 	var info = JSON.parse(response.text);
 	var artist = info.entry.title.$t.split("-")[0].replace(/^\s+|\s+$/g,"");
@@ -13,4 +13,23 @@ chrome.extension.sendRequest({type: "xhr", url: googleURL}, function(response) {
 			chrome.extension.sendRequest({type: "nowPlaying", artist: artist, track: track, duration: duration});
 		};
 	});	
+});
+
+
+
+//Listen
+chrome.extension.onRequest.addListener(
+	function(request, sender, sendResponse) {
+		switch(request.type) {
+		case "updateTitle":
+			//Gets called from chromescrobbler.js when there is a song playing and is scrobbling.
+			//This will add "Scrobbling:" to the video title, to indicate to the user that it is scrobbling.
+			var current_title = document.getElementById("watch-headline-title").getElementsByTagName("span")[0]
+			current_title.innerHTML='<span id="chrome-scrobbler-status">Scrobbling:</span>'+current_title.innerText
+			
+			//Add highlight to scrobble box (connot do in CSS because of path)
+			document.getElementById("chrome-scrobbler-status").style.backgroundImage="url('"+chrome.extension.getURL("highlight.png")+"')";
+			sendResponse({});
+		break;
+	}
 });

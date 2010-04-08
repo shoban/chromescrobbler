@@ -3,24 +3,31 @@
 	<title>Options for Chrome Scrobbler</title>
 	<script type="text/javascript" src="md5.js"></script>
 	<script type="text/javascript" src="options.js"></script>
+	<link rel="stylesheet" type="text/css" href="options.css" />
 </head>
-<body>
-
-<p>
-Enter yout last.fm username and password, and then press save. To permanently delete your saved username/password, press the delete button.
-</p>
-
-<br />
-<form action="">
-Username: 
-<input type="text" id="username">
-<br />
-Password: 
-<input type="password" id="password">
-<br />
-<button onclick="saveOptions()">Save</button>
-<button onclick="deleteOptions()">Delete</button>
-</form>
-
+<body onload="getCurrentUser()">
+<div class="container">
+	<h1>Chrome Scrobbler</h1>
+	<form action="#" onSubmit="saveOptions();return false;">
+		<p>
+			<label for="username">Username:</label> 
+			<input type="text" id="username">
+		</p>
+		<p>
+			<label for="password">Password:</label> 
+			<input type="password" id="password">
+		</p>
+		<p id="buttons">
+			<input type="submit" onclick="saveOptions()" value="Save" />
+			<input type="button" onclick="deleteOptions()" value="Delete" />
+		</p>
+	</form>
+	<p id="status">&nbsp;</p>	
+	<p>
+		Enter yout last.fm username and password, and then press save. 
+	</p>
+	<p>
+		To permanently delete your saved username/password, press the delete button.
+	</p></div>
 </body>
 </html>
