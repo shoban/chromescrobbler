@@ -1,0 +1,10 @@
+span#chrome-scrobbler-status {
+	background-color: #D51007;
+	padding: 3px;
+	font-size: 14px;
+	margin-right: 4px;
+	color: white;
+	border-radius: 3px;
+	position: relative; top: -3px;
+	/*background-image: url('highlight.png'); Cannot get path to image.... gets intstead done via javascript,   chrome.extension.getURL("highlight.png")*/
+}
