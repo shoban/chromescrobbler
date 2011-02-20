@@ -5,6 +5,7 @@ var nowPlayingURL = "http://post.audioscrobbler.com:80/np_1.2";
 var submissionURL =  "http://post2.audioscrobbler.com:80/protocol_1.2";
 
 function handshake() {
+	console.log('handshake(): ');
 	var username = localStorage.username;
 	var password = localStorage.password;
 	var currentTime = parseInt(new Date().getTime() / 1000.0);
@@ -12,6 +13,11 @@ function handshake() {
 	var http_request = new XMLHttpRequest();
 	http_request.onreadystatechange = function() {
 		if (http_request.readyState == 4 && http_request.status == 200) {
+			response = http_request.responseText.split("\n")[0];
+			console.log('handshake(): ' + http_request.responseText);
+			if (response != "OK") {
+				console.log('handshake(): failed. ' + response);
+			}
 			sessionID = http_request.responseText.split("\n")[1];
 			nowPlayingURL = http_request.responseText.split("\n")[2];
 			submissionURL = http_request.responseText.split("\n")[3];
@@ -26,10 +32,18 @@ function handshake() {
 }
 
 function nowPlaying(sender) {
-	var params = "s=" + sessionID + "&a=" + song.artist + "&t=" + song.track +	"&b=&l=" + song.duration + "&m=&n=";
+	var params = "s=" + sessionID + "&a=" + song.artist + "&t=" + song.track + "&b=";
+	if (song.duration != 0) {
+		params += "&l=" + song.duration;
+	} else {
+		params += "&l=";
+	}
+	params += "&m=&n=";
+	console.log('nowPlaying(): params=' + params);
 	var http_request = new XMLHttpRequest();
 	http_request.onreadystatechange = function() {
 		if (http_request.readyState == 4 && http_request.status == 200)
+			console.log('nowPlaying(): rsp=' + http_request.responseText);
 			if (http_request.responseText.split("\n")[0] == "BADSESSION") {handshake(); nowPlaying();}
 			else {
 				//Executes updateTitle function in youtube.js, only when there is a successfull session id. If user had wrong pass or uname, it will not update the title
@@ -45,10 +59,22 @@ function submit() {
 	nowPlayingTab = null;
 	var playTime = parseInt(new Date().getTime() / 1000.0) - song.startTime;
 	if (playTime > 30 && playTime > Math.min(240, song.duration / 2)) {
-		var params = "s=" + sessionID + "&a[0]=" + song.artist + "&t[0]=" + song.track + "&i[0]=" + song.startTime + "&o[0]=P&r[0]=&l[0]=" + song.duration + "&b[0]=&m[0]=&n[0]=";
+		var params = "s=" + sessionID + "&a[0]=" + song.artist;
+		params += "&t[0]=" + song.track;
+		params += "&i[0]=" + song.startTime;
+		params += "&o[0]=" + song.source;
+		params += "&r[0]=";
+		if (song.duration != 0) {
+			params += "&l[0]=" + song.duration;
+		} else {
+			params += "&l[0]=";
+		}
+		params += "&b[0]=&m[0]=&n[0]=";
+		console.log('submit(): params=' + params);
 		var http_request = new XMLHttpRequest();
 		http_request.onreadystatechange = function() {
 			if (http_request.readyState == 4 && http_request.status == 200)
+				console.log('submit(): rsp=' + http_request.responseText);
 				if (http_request.responseText.split("\n")[0] == "BADSESSION") {handshake(); submit();}
 			};
 		http_request.open("POST", submissionURL, true);
@@ -57,8 +83,7 @@ function submit() {
 	}
 }
 
-chrome.extension.onRequest.addListener(
-	function(request, sender, sendResponse) {
+chrome.extension.onRequest.addListener( function(request, sender, sendResponse) {
 		switch(request.type) {
 		case "nowPlaying":
 		if (nowPlayingTab != null) submit();
@@ -66,6 +91,7 @@ chrome.extension.onRequest.addListener(
 		song = {	"artist"	:	request.artist,
 					"track"		:	request.track,
 					"duration"	:	request.duration,
+					"source"	:	request.source,
 					"startTime"	:	parseInt(new Date().getTime() / 1000.0)};
 		if (sessionID == "") handshake();
 		nowPlaying(sender);

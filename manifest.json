@@ -17,6 +17,11 @@
 			"matches": ["http://www.youtube.com/watch?v=*"],
 			"js": ["youtube.js"],
 			"css": ["youtube.css"]
+		},
+		{
+			"matches": ["http://www.pandora.com/*"],
+			"js": ["pandora.js"],
+			"run_at": "document_end"
 		}
   ]
 }

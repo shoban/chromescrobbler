@@ -10,7 +10,8 @@ chrome.extension.sendRequest({type: "xhr", url: googleURL}, function(response) {
 	var validationURL = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=44c7aeb27b91eb0e4e913098a9dc2378&artist="+ artist + "&track=" + track;
 	chrome.extension.sendRequest({type: "xhr", url: validationURL}, function(response) {
 		if (response.text != "You must supply either an artist and track name OR a musicbrainz id.") {
-			chrome.extension.sendRequest({type: "nowPlaying", artist: artist, track: track, duration: duration});
+			chrome.extension.sendRequest({type: "nowPlaying", artist: artist, track: track,
+				duration: duration, source: "P"});
 		};
 	});	
 });
